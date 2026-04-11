@@ -1,5 +1,9 @@
 # Root .gitignore for OffGrid monorepo
 
+# General
+*.zip
+*.log
+
 # Node backend
 /backend/node_modules/
 /backend/npm-debug.log*
