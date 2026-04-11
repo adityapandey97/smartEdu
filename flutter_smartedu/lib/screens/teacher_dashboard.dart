@@ -1,0 +1,287 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../utils/theme_provider.dart';
+import '../utils/app_theme.dart';
+import '../services/mock_data_service.dart';
+
+class TeacherDashboard extends StatefulWidget {
+  const TeacherDashboard({super.key});
+
+  @override
+  State<TeacherDashboard> createState() => _TeacherDashboardState();
+}
+
+class _TeacherDashboardState extends State<TeacherDashboard> {
+  final MockDataService _mockData = MockDataService();
+  int _totalStudents = 0;
+  int _pendingAttendanceIssues = 0;
+  int _pendingAssignments = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDashboardData();
+  }
+
+  void _loadDashboardData() {
+    setState(() {
+      _totalStudents = _mockData.getStudents().length;
+      _pendingAttendanceIssues = _mockData.getAttendanceIssues().length;
+      _pendingAssignments = _mockData
+          .getAssignments()
+          .where((a) => a.deadline.isAfter(DateTime.now()))
+          .length;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = _mockData.currentUser;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor =
+        isDark ? AppColors.primaryDark : AppColors.primaryLight;
+    final secondaryColor =
+        isDark ? AppColors.secondaryDark : AppColors.secondaryLight;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('SmartEdu - Teacher'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [primaryColor, secondaryColor])),
+        ),
+        actions: [
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return IconButton(
+                icon: Icon(themeProvider.isDarkMode
+                    ? Icons.light_mode
+                    : Icons.dark_mode),
+                onPressed: () => themeProvider.toggleTheme(),
+              );
+            },
+          ),
+          IconButton(
+              icon: const Icon(Icons.notifications),
+              onPressed: () => Navigator.pushNamed(context, '/notifications')),
+        ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async => _loadDashboardData(),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [primaryColor, secondaryColor],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white,
+                      child: Text(
+                          user?.name.substring(0, 1).toUpperCase() ?? 'T',
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: primaryColor)),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Welcome, ${user?.name ?? 'Teacher'}!',
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white)),
+                          Text(user?.department ?? 'Computer Science',
+                              style: const TextStyle(color: Colors.white70)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              _buildStatCards(primaryColor),
+              const SizedBox(height: 24),
+              _buildQuickActions(context, primaryColor),
+              const SizedBox(height: 24),
+              _buildRecentActivity(context, primaryColor),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatCards(Color primaryColor) {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 1.2,
+      children: [
+        _buildStatCard('Total Students', '$_totalStudents', Icons.people,
+            AppColors.primary),
+        _buildStatCard('Pending Issues', '$_pendingAttendanceIssues',
+            Icons.report, AppColors.warning),
+        _buildStatCard('Active Assignments', '$_pendingAssignments',
+            Icons.assignment, AppColors.success),
+        _buildStatCard('Active Quizzes', '${_mockData.getQuizzes().length}',
+            Icons.quiz, AppColors.info),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(
+      String title, String value, IconData icon, Color color) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 32),
+            const SizedBox(height: 8),
+            Text(value,
+                style: TextStyle(
+                    fontSize: 24, fontWeight: FontWeight.bold, color: color)),
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActions(BuildContext context, Color primaryColor) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Quick Actions',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            _buildActionChip('Take Attendance', Icons.how_to_reg, primaryColor,
+                () => Navigator.pushNamed(context, '/take-attendance')),
+            _buildActionChip('Upload Marks', Icons.grade, AppColors.success,
+                () => Navigator.pushNamed(context, '/upload-marks')),
+            _buildActionChip(
+                'Create Assignment',
+                Icons.assignment_add,
+                AppColors.warning,
+                () => Navigator.pushNamed(context, '/create-assignment')),
+            _buildActionChip(
+                'Upload Material',
+                Icons.upload_file,
+                AppColors.info,
+                () => Navigator.pushNamed(context, '/upload-material')),
+            _buildActionChip('Create Quiz', Icons.quiz, AppColors.secondary,
+                () => Navigator.pushNamed(context, '/create-quiz')),
+            _buildActionChip('View Attendance', Icons.visibility, primaryColor,
+                () => Navigator.pushNamed(context, '/attendance')),
+            _buildActionChip(
+                'Attendance Issues',
+                Icons.report_problem,
+                AppColors.error,
+                () => Navigator.pushNamed(context, '/attendance-issues')),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionChip(
+      String title, IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withOpacity(0.3))),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 8),
+            Text(title,
+                style: TextStyle(color: color, fontWeight: FontWeight.w600)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentActivity(BuildContext context, Color primaryColor) {
+    final notifications = _mockData.getNotifications().take(3).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Recent Activity',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        Card(
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: notifications.length,
+            separatorBuilder: (_, __) => const Divider(),
+            itemBuilder: (context, index) {
+              final notification = notifications[index];
+              return ListTile(
+                leading: Icon(_getNotificationIcon(notification.type),
+                    color: primaryColor),
+                title: Text(notification.title,
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: Text(notification.message,
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                trailing: Icon(
+                    notification.read ? Icons.check_circle : Icons.circle,
+                    size: 16,
+                    color: notification.read ? Colors.grey : AppColors.info),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  IconData _getNotificationIcon(String type) {
+    switch (type) {
+      case 'attendance':
+        return Icons.how_to_reg;
+      case 'assignment':
+        return Icons.assignment;
+      case 'quiz':
+        return Icons.quiz;
+      case 'holiday':
+        return Icons.celebration;
+      case 'schedule':
+        return Icons.schedule;
+      default:
+        return Icons.notifications;
+    }
+  }
+}

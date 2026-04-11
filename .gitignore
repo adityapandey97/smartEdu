@@ -1,0 +1,41 @@
+# Root .gitignore for OffGrid monorepo
+
+# Node backend
+/backend/node_modules/
+/backend/npm-debug.log*
+/backend/yarn-debug.log*
+/backend/yarn-error.log*
+/backend/pnpm-debug.log*
+/backend/.env
+
+# Flutter app artifacts
+/flutter_smartedu/.dart_tool/
+/flutter_smartedu/build/
+/flutter_smartedu/.flutter-plugins
+/flutter_smartedu/.flutter-plugins-dependencies
+/flutter_smartedu/.packages
+/flutter_smartedu/.metadata
+/flutter_smartedu/ios/Pods/
+/flutter_smartedu/ios/Flutter/Flutter.framework
+/flutter_smartedu/ios/Flutter/Flutter.podspec
+/flutter_smartedu/ios/ServiceDefinitions.json
+/flutter_smartedu/android/.gradle/
+/flutter_smartedu/android/app/*.iml
+/flutter_smartedu/.idea/
+/flutter_smartedu/.vscode/
+
+# IDE files
+/.idea/
+/.vscode/
+*.iml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*~
