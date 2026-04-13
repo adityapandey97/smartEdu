@@ -1,611 +1,87 @@
-import '../models/user_model.dart';
-import '../models/attendance_model.dart';
 import '../models/assignment_model.dart';
-import '../models/mark_model.dart';
-import '../models/notification_model.dart';
-import '../models/quiz_model.dart';
-import '../models/material_model.dart';
-import '../models/schedule_model.dart';
+import '../models/attendance_model.dart';
+import '../models/dashboard_insight_model.dart';
+import '../models/event_model.dart';
 import '../models/feedback_model.dart';
 import '../models/holiday_model.dart';
 import '../models/leave_model.dart';
-import '../models/event_model.dart';
+import '../models/mark_model.dart';
+import '../models/material_model.dart';
+import '../models/notification_model.dart';
+import '../models/quiz_model.dart';
+import '../models/schedule_model.dart';
+import '../models/user_model.dart';
 
 class MockDataService {
   static final MockDataService _instance = MockDataService._internal();
+
   factory MockDataService() => _instance;
+
   MockDataService._internal();
 
   User? _currentUser;
-  User? get currentUser => _currentUser;
   bool _isLoggedIn = false;
-  bool get isLoggedIn => _isLoggedIn;
   bool _isStudent = true;
 
-  final List<User> _demoStudents = [
-    User(
-        id: 'STU001',
-        name: 'Rahul Sharma',
-        email: 'rahul@smartedu.com',
-        role: 'student',
-        department: 'Computer Science',
-        semester: 5,
-        studentId: 'CS2021001'),
-    User(
-        id: 'STU002',
-        name: 'Priya Patel',
-        email: 'priya@smartedu.com',
-        role: 'student',
-        department: 'Computer Science',
-        semester: 5,
-        studentId: 'CS2021002'),
-    User(
-        id: 'STU003',
-        name: 'Amit Kumar',
-        email: 'amit@smartedu.com',
-        role: 'student',
-        department: 'Computer Science',
-        semester: 5,
-        studentId: 'CS2021003'),
-    User(
-        id: 'STU004',
-        name: 'Sneha Gupta',
-        email: 'sneha@smartedu.com',
-        role: 'student',
-        department: 'Computer Science',
-        semester: 5,
-        studentId: 'CS2021004'),
-    User(
-        id: 'STU005',
-        name: 'Vikram Singh',
-        email: 'vikram@smartedu.com',
-        role: 'student',
-        department: 'Computer Science',
-        semester: 5,
-        studentId: 'CS2021005'),
-  ];
+  final List<User> _students = [];
+  final List<User> _teachers = [];
+  final List<AttendanceOverview> _attendanceData = [];
+  final List<AttendanceIssue> _attendanceIssues = [];
+  final List<Assignment> _assignments = [];
+  final List<Submission> _submissions = [];
+  final List<Mark> _marks = [];
+  final List<AppNotification> _notifications = [];
+  final List<Quiz> _quizzes = [];
+  final List<QuizResult> _quizResults = [];
+  final List<Material> _materials = [];
+  final List<Schedule> _schedules = [];
+  final List<Holiday> _holidays = [];
+  final List<LeaveApplication> _leaveApplications = [];
+  final List<Event> _events = [];
+  final List<Feedback> _feedbackList = [];
 
-  final List<User> _demoTeachers = [
-    User(
-        id: 'TCH001',
-        name: 'Dr. Rajesh Kumar',
-        email: 'rajesh@smartedu.com',
-        role: 'teacher',
-        department: 'Computer Science'),
-    User(
-        id: 'TCH002',
-        name: 'Prof. Anita Verma',
-        email: 'anita@smartedu.com',
-        role: 'teacher',
-        department: 'Computer Science'),
-  ];
-
-  final List<AttendanceOverview> _attendanceData = [
-    AttendanceOverview(
-        subject: 'DBMS',
-        totalClasses: 45,
-        presentClasses: 42,
-        percentage: 93.3,
-        isBelow75: false),
-    AttendanceOverview(
-        subject: 'Operating Systems',
-        totalClasses: 40,
-        presentClasses: 35,
-        percentage: 87.5,
-        isBelow75: false),
-    AttendanceOverview(
-        subject: 'Computer Networks',
-        totalClasses: 38,
-        presentClasses: 36,
-        percentage: 94.7,
-        isBelow75: false),
-    AttendanceOverview(
-        subject: 'Software Engineering',
-        totalClasses: 35,
-        presentClasses: 32,
-        percentage: 91.4,
-        isBelow75: false),
-  ];
-
-  final List<AttendanceOverview> _teacherAttendanceData = [
-    AttendanceOverview(
-        subject: 'DBMS',
-        totalClasses: 45,
-        presentClasses: 42,
-        percentage: 93.3,
-        isBelow75: false),
-    AttendanceOverview(
-        subject: 'Operating Systems',
-        totalClasses: 40,
-        presentClasses: 38,
-        percentage: 95.0,
-        isBelow75: false),
-    AttendanceOverview(
-        subject: 'Computer Networks',
-        totalClasses: 38,
-        presentClasses: 35,
-        percentage: 92.1,
-        isBelow75: false),
-    AttendanceOverview(
-        subject: 'Software Engineering',
-        totalClasses: 35,
-        presentClasses: 33,
-        percentage: 94.3,
-        isBelow75: false),
-  ];
-
-  final List<AttendanceIssue> _attendanceIssues = [
-    AttendanceIssue(
-      id: 'ISS001',
-      studentId: 'STU002',
-      studentName: 'Priya Patel',
-      subject: 'DBMS',
-      date: DateTime.now().subtract(const Duration(days: 3)),
-      issueType: 'Medical',
-      description: 'Medical emergency - was in hospital',
-      status: 'pending',
-    ),
-    AttendanceIssue(
-      id: 'ISS002',
-      studentId: 'STU003',
-      studentName: 'Amit Kumar',
-      subject: 'Operating Systems',
-      date: DateTime.now().subtract(const Duration(days: 5)),
-      issueType: 'Personal',
-      description: 'Family function - informed teacher via email',
-      status: 'pending',
-    ),
-  ];
-
-  final List<Assignment> _assignments = [
-    Assignment(
-      id: 'ASN001',
-      title: 'DBMS Project - Library Management System',
-      description:
-          'Design and implement a library management system using SQL and normalization techniques.',
-      subject: 'DBMS',
-      deadline: DateTime.now().add(const Duration(days: 7)),
-      dueDate: DateTime.now().add(const Duration(days: 7)),
-      maxMarks: 100,
-      teacherId: 'TCH001',
-      teacherName: 'Dr. Rajesh Kumar',
-      createdBy: 'TCH001',
-    ),
-    Assignment(
-      id: 'ASN002',
-      title: 'OS Assignment - Process Scheduling',
-      description:
-          'Implement different process scheduling algorithms (FCFS, SJF, Round Robin) in C.',
-      subject: 'Operating Systems',
-      deadline: DateTime.now().add(const Duration(days: 5)),
-      dueDate: DateTime.now().add(const Duration(days: 5)),
-      maxMarks: 50,
-      teacherId: 'TCH001',
-      teacherName: 'Dr. Rajesh Kumar',
-      createdBy: 'TCH001',
-    ),
-    Assignment(
-      id: 'ASN003',
-      title: 'Network Assignment - Socket Programming',
-      description: 'Create a client-server application using TCP/IP sockets.',
-      subject: 'Computer Networks',
-      deadline: DateTime.now().add(const Duration(days: 10)),
-      dueDate: DateTime.now().add(const Duration(days: 10)),
-      maxMarks: 75,
-      teacherId: 'TCH002',
-      teacherName: 'Prof. Anita Verma',
-      createdBy: 'TCH002',
-    ),
-    Assignment(
-      id: 'ASN004',
-      title: 'SE Assignment - Use Case Diagrams',
-      description: 'Create comprehensive use case diagrams for an ATM system.',
-      subject: 'Software Engineering',
-      deadline: DateTime.now().subtract(const Duration(days: 2)),
-      dueDate: DateTime.now().subtract(const Duration(days: 2)),
-      maxMarks: 50,
-      teacherId: 'TCH002',
-      teacherName: 'Prof. Anita Verma',
-      createdBy: 'TCH002',
-    ),
-  ];
-
-  final List<Submission> _submissions = [
-    Submission(
-        id: 'SUB001',
-        assignmentId: 'ASN004',
-        studentId: 'STU001',
-        content: 'Submitted assignment',
-        submittedAt: DateTime.now().subtract(const Duration(days: 3)),
-        status: 'submitted',
-        fileUrl: 'files/submission.pdf',
-        marks: 45),
-  ];
-
-  final List<Mark> _marks = [
-    Mark(
-        id: 'MK001',
-        studentId: 'STU001',
-        subject: 'DBMS',
-        examType: 'Mid Term',
-        marks: 85,
-        total: 100,
-        createdAt: DateTime.now().subtract(const Duration(days: 30))),
-    Mark(
-        id: 'MK002',
-        studentId: 'STU001',
-        subject: 'DBMS',
-        examType: 'Quiz 1',
-        marks: 18,
-        total: 20,
-        createdAt: DateTime.now().subtract(const Duration(days: 20))),
-    Mark(
-        id: 'MK003',
-        studentId: 'STU001',
-        subject: 'Operating Systems',
-        examType: 'Mid Term',
-        marks: 78,
-        total: 100,
-        createdAt: DateTime.now().subtract(const Duration(days: 30))),
-    Mark(
-        id: 'MK004',
-        studentId: 'STU001',
-        subject: 'Operating Systems',
-        examType: 'Quiz 1',
-        marks: 15,
-        total: 20,
-        createdAt: DateTime.now().subtract(const Duration(days: 20))),
-    Mark(
-        id: 'MK005',
-        studentId: 'STU001',
-        subject: 'Computer Networks',
-        examType: 'Mid Term',
-        marks: 92,
-        total: 100,
-        createdAt: DateTime.now().subtract(const Duration(days: 30))),
-    Mark(
-        id: 'MK006',
-        studentId: 'STU001',
-        subject: 'Computer Networks',
-        examType: 'Quiz 1',
-        marks: 19,
-        total: 20,
-        createdAt: DateTime.now().subtract(const Duration(days: 20))),
-    Mark(
-        id: 'MK007',
-        studentId: 'STU001',
-        subject: 'Software Engineering',
-        examType: 'Mid Term',
-        marks: 88,
-        total: 100,
-        createdAt: DateTime.now().subtract(const Duration(days: 30))),
-    Mark(
-        id: 'MK008',
-        studentId: 'STU001',
-        subject: 'Software Engineering',
-        examType: 'Quiz 1',
-        marks: 17,
-        total: 20,
-        createdAt: DateTime.now().subtract(const Duration(days: 20))),
-  ];
-
-  final List<AppNotification> _notifications = [
-    AppNotification(
-        id: 'NTF001',
-        title: 'Attendance Warning',
-        message:
-            'Your attendance in DBMS has dropped below 75%. Please attend upcoming classes.',
-        type: 'attendance',
-        read: false,
-        createdAt: DateTime.now().subtract(const Duration(hours: 2))),
-    AppNotification(
-        id: 'NTF002',
-        title: 'New Assignment',
-        message:
-            'New assignment posted: DBMS Project - Library Management System',
-        type: 'assignment',
-        read: false,
-        createdAt: DateTime.now().subtract(const Duration(hours: 5))),
-    AppNotification(
-        id: 'NTF003',
-        title: 'Holiday Announcement',
-        message:
-            'College will remain closed on 15th April for Holi celebration.',
-        type: 'holiday',
-        read: true,
-        createdAt: DateTime.now().subtract(const Duration(days: 1))),
-    AppNotification(
-        id: 'NTF004',
-        title: 'Quiz Result',
-        message: 'Your Quiz 1 result in DBMS is out. Score: 18/20',
-        type: 'quiz',
-        read: true,
-        createdAt: DateTime.now().subtract(const Duration(days: 2))),
-    AppNotification(
-        id: 'NTF005',
-        title: 'Class Timetable Change',
-        message: 'DBMS class timing changed to 9:00 AM from tomorrow.',
-        type: 'schedule',
-        read: false,
-        createdAt: DateTime.now().subtract(const Duration(days: 3))),
-  ];
-
-  final List<Quiz> _quizzes = [
-    Quiz(
-      id: 'QZ001',
-      title: 'DBMS Fundamentals',
-      subject: 'DBMS',
-      duration: 30,
-      createdBy: 'TCH001',
-      createdAt: DateTime.now().subtract(const Duration(days: 5)),
-      questions: [
-        QuizQuestion(
-            question: 'What is normalization?',
-            options: [
-              'Database concept',
-              'Process to reduce redundancy',
-              'Type of database',
-              'Query language'
-            ],
-            correctAnswer: 1),
-        QuizQuestion(
-            question: 'SQL stands for?',
-            options: [
-              'Structured Query Language',
-              'Simple Query Language',
-              'Standard Query Language',
-              'System Query Language'
-            ],
-            correctAnswer: 0),
-        QuizQuestion(
-            question: 'Primary key can be?',
-            options: ['Null', 'Duplicate', 'Unique', 'Temporary'],
-            correctAnswer: 2),
-      ],
-      teacherName: 'Dr. Rajesh Kumar',
-    ),
-    Quiz(
-      id: 'QZ002',
-      title: 'OS Process Management',
-      subject: 'Operating Systems',
-      duration: 20,
-      createdBy: 'TCH001',
-      createdAt: DateTime.now().subtract(const Duration(days: 3)),
-      questions: [
-        QuizQuestion(
-            question: 'What is a process?',
-            options: ['Program in execution', 'Compiler', 'Type of OS', 'File'],
-            correctAnswer: 0),
-        QuizQuestion(
-            question: 'FCFS scheduling is?',
-            options: ['Non-preemptive', 'Preemptive', 'Both', 'Neither'],
-            correctAnswer: 0),
-      ],
-      teacherName: 'Dr. Rajesh Kumar',
-    ),
-    Quiz(
-      id: 'QZ003',
-      title: 'Computer Networks Basics',
-      subject: 'Computer Networks',
-      duration: 25,
-      createdBy: 'TCH002',
-      createdAt: DateTime.now().subtract(const Duration(days: 2)),
-      questions: [
-        QuizQuestion(
-            question: 'OSI model has how many layers?',
-            options: ['5', '6', '7', '8'],
-            correctAnswer: 2),
-        QuizQuestion(
-            question: 'TCP is connection-oriented?',
-            options: ['Yes', 'No', 'Maybe', 'Depends'],
-            correctAnswer: 0),
-      ],
-      teacherName: 'Prof. Anita Verma',
-    ),
-  ];
-
-  final List<QuizResult> _quizResults = [
-    QuizResult(
-        id: 'QR001',
-        quizId: 'QZ003',
-        studentId: 'STU001',
-        score: 40,
-        totalQuestions: 50,
-        completedAt: DateTime.now().subtract(const Duration(days: 2))),
-  ];
-
-  final List<Material> _materials = [
-    Material(
-        id: 'MAT001',
-        title: 'DBMS Complete Notes',
-        description: 'Comprehensive notes covering all DBMS topics',
-        subject: 'DBMS',
-        type: 'Notes',
-        fileUrl: 'files/dbms_notes.pdf',
-        uploadedBy: 'TCH001',
-        uploadedByName: 'Dr. Rajesh Kumar',
-        createdAt: DateTime.now().subtract(const Duration(days: 10))),
-    Material(
-        id: 'MAT002',
-        title: 'SQL Cheat Sheet',
-        description: 'Quick reference guide for SQL queries',
-        subject: 'DBMS',
-        type: 'Reference',
-        fileUrl: 'files/sql_cheatsheet.pdf',
-        uploadedBy: 'TCH001',
-        uploadedByName: 'Dr. Rajesh Kumar',
-        createdAt: DateTime.now().subtract(const Duration(days: 5))),
-    Material(
-        id: 'MAT003',
-        title: 'OS Process Scheduling PPT',
-        description: 'PowerPoint presentation on process scheduling',
-        subject: 'Operating Systems',
-        type: 'Slides',
-        fileUrl: 'files/os_scheduling.pptx',
-        uploadedBy: 'TCH001',
-        uploadedByName: 'Dr. Rajesh Kumar',
-        createdAt: DateTime.now().subtract(const Duration(days: 15))),
-    Material(
-        id: 'MAT004',
-        title: 'Network Layers Diagram',
-        description: 'Visual representation of OSI model layers',
-        subject: 'Computer Networks',
-        type: 'Image',
-        fileUrl: 'files/osi_layers.png',
-        uploadedBy: 'TCH002',
-        uploadedByName: 'Prof. Anita Verma',
-        createdAt: DateTime.now().subtract(const Duration(days: 7))),
-  ];
-
-  final List<Schedule> _schedules = [
-    Schedule(
-        id: 'SCH001',
-        dayOfWeek: 1,
-        period: 1,
-        subject: 'DBMS',
-        room: 'CS Lab 1',
-        teacherName: 'Dr. Rajesh Kumar'),
-    Schedule(
-        id: 'SCH002',
-        dayOfWeek: 1,
-        period: 2,
-        subject: 'Operating Systems',
-        room: 'CS Lab 2',
-        teacherName: 'Dr. Rajesh Kumar'),
-    Schedule(
-        id: 'SCH003',
-        dayOfWeek: 2,
-        period: 1,
-        subject: 'Computer Networks',
-        room: 'CS Lab 1',
-        teacherName: 'Prof. Anita Verma'),
-    Schedule(
-        id: 'SCH004',
-        dayOfWeek: 2,
-        period: 2,
-        subject: 'Software Engineering',
-        room: 'CS Lab 2',
-        teacherName: 'Prof. Anita Verma'),
-    Schedule(
-        id: 'SCH005',
-        dayOfWeek: 3,
-        period: 1,
-        subject: 'DBMS',
-        room: 'CS Lab 1',
-        teacherName: 'Dr. Rajesh Kumar'),
-    Schedule(
-        id: 'SCH006',
-        dayOfWeek: 4,
-        period: 2,
-        subject: 'Operating Systems',
-        room: 'CS Lab 2',
-        teacherName: 'Dr. Rajesh Kumar'),
-    Schedule(
-        id: 'SCH007',
-        dayOfWeek: 5,
-        period: 1,
-        subject: 'Computer Networks',
-        room: 'CS Lab 1',
-        teacherName: 'Prof. Anita Verma'),
-  ];
-
-  final List<Holiday> _holidays = [
-    Holiday(
-        id: 'HOL001',
-        title: 'Holi',
-        date: DateTime(2026, 3, 14),
-        reason: 'Festival of Colors'),
-    Holiday(
-        id: 'HOL002',
-        title: 'Good Friday',
-        date: DateTime(2026, 4, 3),
-        reason: 'Religious Holiday'),
-    Holiday(
-        id: 'HOL003',
-        title: 'Independence Day',
-        date: DateTime(2026, 8, 15),
-        reason: 'National Holiday'),
-    Holiday(
-        id: 'HOL004',
-        title: 'Gandhi Jayanti',
-        date: DateTime(2026, 10, 2),
-        reason: 'Birth Anniversary of Mahatma Gandhi'),
-  ];
-
-  final List<LeaveApplication> _leaveApplications = [
-    LeaveApplication(
-        id: 'LV001',
-        studentId: 'STU001',
-        reason: 'Medical checkup',
-        startDate: DateTime.now().add(const Duration(days: 1)),
-        endDate: DateTime.now().add(const Duration(days: 2)),
-        status: 'pending',
-        createdAt: DateTime.now()),
-  ];
-
-  final List<Event> _events = [
-    Event(
-        id: 'EVT001',
-        title: 'Tech Fest 2026',
-        description: 'Annual technical fest with coding competitions',
-        date: DateTime.now().add(const Duration(days: 20)),
-        venue: 'Main Auditorium'),
-    Event(
-        id: 'EVT002',
-        title: 'Workshop on AI/ML',
-        description: 'Hands-on workshop on Machine Learning',
-        date: DateTime.now().add(const Duration(days: 15)),
-        venue: 'CS Lab 1'),
-    Event(
-        id: 'EVT003',
-        title: 'Campus Placement Drive',
-        description: 'TCS and Infosys recruiting for 2026 batch',
-        date: DateTime.now().add(const Duration(days: 30)),
-        venue: 'Placement Cell'),
-  ];
-
-  final List<Feedback> _feedbackList = [
-    Feedback(
-        id: 'FDB001',
-        studentId: 'STU001',
-        teacherId: 'TCH001',
-        subject: 'DBMS',
-        rating: 4,
-        comment:
-            'Excellent teaching methodology. Would appreciate more practical sessions.',
-        createdAt: DateTime.now().subtract(const Duration(days: 5))),
-    Feedback(
-        id: 'FDB002',
-        studentId: 'STU002',
-        teacherId: 'TCH001',
-        subject: 'Operating Systems',
-        rating: 5,
-        comment: 'Very helpful and supportive faculty.',
-        createdAt: DateTime.now().subtract(const Duration(days: 10))),
-  ];
+  User? get currentUser => _currentUser;
+  bool get isLoggedIn => _isLoggedIn;
+  bool get isStudent => _isStudent;
+  bool get isTeacher => !_isStudent;
 
   Future<void> login(String email, String password) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (email.contains('teacher') || email.contains('professor')) {
-      _currentUser = _demoTeachers.first;
-      _isStudent = false;
-    } else {
-      _currentUser = _demoStudents.first;
-      _isStudent = true;
-    }
+    await Future.delayed(const Duration(milliseconds: 300));
+    final normalizedEmail = email.trim().toLowerCase();
+    final inferredTeacher =
+        normalizedEmail.contains('teacher') || normalizedEmail.contains('prof');
+
+    _isStudent = !inferredTeacher;
+    _currentUser = User(
+      id: inferredTeacher ? 'TCH-LIVE' : 'STU-LIVE',
+      name: _nameFromEmail(normalizedEmail, fallback: inferredTeacher ? 'Teacher' : 'Student'),
+      email: normalizedEmail,
+      role: inferredTeacher ? 'teacher' : 'student',
+      department: 'Computer Science',
+      semester: inferredTeacher ? null : 1,
+      studentId: inferredTeacher ? null : 'NEW-STUDENT',
+    );
     _isLoggedIn = true;
   }
 
   Future<void> register(
-      String name, String email, String password, String role) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    if (role == 'teacher') {
-      _currentUser = _demoTeachers.first;
-      _isStudent = false;
-    } else {
-      _currentUser = _demoStudents.first;
-      _isStudent = true;
-    }
+    String name,
+    String email,
+    String password,
+    String role,
+  ) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    final normalizedRole = role.toLowerCase();
+    _isStudent = normalizedRole != 'teacher';
+    _currentUser = User(
+      id: _isStudent ? 'STU-LIVE' : 'TCH-LIVE',
+      name: name.trim().isEmpty ? (_isStudent ? 'Student' : 'Teacher') : name.trim(),
+      email: email.trim(),
+      role: _isStudent ? 'student' : 'teacher',
+      department: 'Computer Science',
+      semester: _isStudent ? 1 : null,
+      studentId: _isStudent ? 'NEW-STUDENT' : null,
+    );
     _isLoggedIn = true;
   }
 
@@ -615,45 +91,269 @@ class MockDataService {
     _isStudent = true;
   }
 
-  bool get isStudent => _isStudent;
-  bool get isTeacher => !_isStudent;
-
   List<AttendanceOverview> getAttendanceOverview() =>
-      _isStudent ? _attendanceData : _teacherAttendanceData;
-  List<AttendanceIssue> getAttendanceIssues() => _attendanceIssues;
-  List<Assignment> getAssignments() => _assignments;
-  List<Submission> getSubmissions() => _submissions;
-  List<Mark> getMarks() => _marks;
-  List<AppNotification> getNotifications() => _notifications;
-  List<Quiz> getQuizzes() => _quizzes;
-  List<QuizResult> getQuizResults() => _quizResults;
-  List<Material> getMaterials() => _materials;
-  List<Schedule> getSchedule() => _schedules;
-  List<Holiday> getHolidays() => _holidays;
-  List<LeaveApplication> getLeaveApplications() => _leaveApplications;
-  List<Event> getEvents() => _events;
-  List<Feedback> getFeedbackList() => _feedbackList;
-  List<User> getStudents() => _demoStudents;
-  List<User> getTeachers() => _demoTeachers;
+      List.unmodifiable(_attendanceData);
+  List<AttendanceIssue> getAttendanceIssues() =>
+      List.unmodifiable(_attendanceIssues);
+  List<Assignment> getAssignments() => List.unmodifiable(_assignments);
+  List<Submission> getSubmissions() => List.unmodifiable(_submissions);
+  List<Mark> getMarks() => List.unmodifiable(_marks);
+  List<AppNotification> getNotifications() => List.unmodifiable(_notifications);
+  List<Quiz> getQuizzes() => List.unmodifiable(_quizzes);
+  List<QuizResult> getQuizResults() => List.unmodifiable(_quizResults);
+  List<Material> getMaterials() => List.unmodifiable(_materials);
+  List<Schedule> getSchedule() => List.unmodifiable(_schedules);
+  List<Holiday> getHolidays() => List.unmodifiable(_holidays);
+  List<LeaveApplication> getLeaveApplications() =>
+      List.unmodifiable(_leaveApplications);
+  List<Event> getEvents() => List.unmodifiable(_events);
+  List<Feedback> getFeedbackList() => List.unmodifiable(_feedbackList);
+  List<User> getStudents() => List.unmodifiable(_students);
+  List<User> getTeachers() => List.unmodifiable(_teachers);
 
   int getUnreadNotificationCount() =>
-      _notifications.where((n) => !n.isRead).length;
+      _notifications.where((notification) => !notification.isRead).length;
+
   double getOverallAttendancePercentage() {
-    if (_attendanceData.isEmpty) return 0;
-    final total =
-        _attendanceData.fold<int>(0, (sum, a) => sum + a.totalClasses);
-    final attended =
-        _attendanceData.fold<int>(0, (sum, a) => sum + a.attendedClasses);
-    return (attended / total * 100);
+    if (_attendanceData.isEmpty) {
+      return 0;
+    }
+
+    final totalClasses =
+        _attendanceData.fold<int>(0, (sum, item) => sum + item.totalClasses);
+    final attendedClasses =
+        _attendanceData.fold<int>(0, (sum, item) => sum + item.attendedClasses);
+
+    if (totalClasses == 0) {
+      return 0;
+    }
+
+    return attendedClasses / totalClasses * 100;
   }
 
   double getAverageMarks() {
-    if (_marks.isEmpty) return 0;
-    final total = _marks.fold<double>(0, (sum, m) => sum + m.marks);
-    final max = _marks.fold<double>(0, (sum, m) => sum + m.maxMarks);
-    return (total / max * 100);
+    if (_marks.isEmpty) {
+      return 0;
+    }
+
+    final totalScored = _marks.fold<double>(0, (sum, mark) => sum + mark.marks);
+    final totalPossible = _marks.fold<double>(0, (sum, mark) => sum + mark.total);
+
+    if (totalPossible == 0) {
+      return 0;
+    }
+
+    return totalScored / totalPossible * 100;
   }
 
-  int getPendingAssignments() =>
-      _assignments.where((a) => a.dueDate.isAfter(DateTime.now())).length;
+  int getPendingAssignments() => _assignments
+      .where((assignment) => assignment.deadline.isAfter(DateTime.now()))
+      .length;
+
+  List<DashboardInsight> getStudentInsights() {
+    if (_attendanceData.isEmpty &&
+        _assignments.isEmpty &&
+        _quizzes.isEmpty &&
+        _notifications.isEmpty) {
+      return const [
+        DashboardInsight(
+          title: 'Ready for live data',
+          message:
+              'Your dashboard is clean and waiting for attendance, assignments, and quiz records from the backend.',
+          routeName: '/schedule',
+          actionLabel: 'Open schedule',
+          severity: 'low',
+          iconKey: 'rocket',
+        ),
+        DashboardInsight(
+          title: 'Set up your study flow',
+          message:
+              'Once real classes sync in, this area will surface deadlines, weak subjects, and preparation alerts automatically.',
+          routeName: '/materials',
+          actionLabel: 'Explore materials',
+          severity: 'low',
+          iconKey: 'spark',
+        ),
+      ];
+    }
+
+    final insights = <DashboardInsight>[];
+
+    if (getPendingAssignments() > 0) {
+      insights.add(
+        DashboardInsight(
+          title: 'Assignments in progress',
+          message:
+              '${getPendingAssignments()} task(s) are still open. Keep momentum on the nearest deadline first.',
+          routeName: '/assignments',
+          actionLabel: 'View assignments',
+          severity: 'medium',
+          iconKey: 'assignment',
+        ),
+      );
+    }
+
+    if (getOverallAttendancePercentage() > 0 &&
+        getOverallAttendancePercentage() < 75) {
+      insights.add(
+        DashboardInsight(
+          title: 'Attendance needs action',
+          message:
+              'Your current attendance is ${getOverallAttendancePercentage().toStringAsFixed(1)}%. Protect eligibility before the next review.',
+          routeName: '/attendance',
+          actionLabel: 'Review attendance',
+          severity: 'high',
+          iconKey: 'warning',
+        ),
+      );
+    }
+
+    if (_quizzes.isNotEmpty) {
+      insights.add(
+        DashboardInsight(
+          title: 'Quiz window active',
+          message: 'There are quiz records available for your current subjects.',
+          routeName: '/quizzes',
+          actionLabel: 'Open quizzes',
+          severity: 'low',
+          iconKey: 'quiz',
+        ),
+      );
+    }
+
+    return insights;
+  }
+
+  List<DashboardInsight> getTeacherInsights() {
+    if (_attendanceIssues.isEmpty &&
+        _assignments.isEmpty &&
+        _materials.isEmpty &&
+        _schedules.isEmpty) {
+      return const [
+        DashboardInsight(
+          title: 'Teaching space is ready',
+          message:
+              'No placeholder records are being shown. This dashboard will elevate real classes, issues, and delivery metrics as soon as backend data arrives.',
+          routeName: '/create-assignment',
+          actionLabel: 'Create assignment',
+          severity: 'low',
+          iconKey: 'spark',
+        ),
+        DashboardInsight(
+          title: 'Start with classroom tools',
+          message:
+              'You can use OTP attendance, content uploads, and quiz creation once live academic data is connected.',
+          routeName: '/generate-attendance-otp',
+          actionLabel: 'Attendance tools',
+          severity: 'low',
+          iconKey: 'rocket',
+        ),
+      ];
+    }
+
+    final insights = <DashboardInsight>[];
+
+    if (_attendanceIssues.isNotEmpty) {
+      insights.add(
+        DashboardInsight(
+          title: 'Attendance issues pending',
+          message:
+              '${_attendanceIssues.length} issue(s) need review and closure.',
+          routeName: '/attendance-issues',
+          actionLabel: 'Review issues',
+          severity: 'high',
+          iconKey: 'warning',
+        ),
+      );
+    }
+
+    if (getPendingAssignments() > 0) {
+      insights.add(
+        DashboardInsight(
+          title: 'Active assessments running',
+          message:
+              '${getPendingAssignments()} assignment(s) are still collecting submissions.',
+          routeName: '/create-assignment',
+          actionLabel: 'Manage assignments',
+          severity: 'medium',
+          iconKey: 'assignment',
+        ),
+      );
+    }
+
+    return insights;
+  }
+
+  List<FocusMetric> getStudentFocusMetrics() {
+    return [
+      FocusMetric(
+        label: 'Attendance',
+        value: _attendanceData.isEmpty
+            ? '--'
+            : '${getOverallAttendancePercentage().toStringAsFixed(1)}%',
+        helperText: _attendanceData.isEmpty
+            ? 'Waiting for live attendance sync'
+            : 'Current aggregate across enrolled classes',
+      ),
+      FocusMetric(
+        label: 'Assignments',
+        value: '${getPendingAssignments()}',
+        helperText: _assignments.isEmpty
+            ? 'No live assignment records yet'
+            : 'Pending tasks still open for submission',
+      ),
+      FocusMetric(
+        label: 'Notifications',
+        value: '${getUnreadNotificationCount()}',
+        helperText: _notifications.isEmpty
+            ? 'No unread updates right now'
+            : 'Unread schedule or academic alerts',
+      ),
+    ];
+  }
+
+  List<FocusMetric> getTeacherFocusMetrics() {
+    return [
+      FocusMetric(
+        label: 'Students',
+        value: '${_students.length}',
+        helperText: _students.isEmpty
+            ? 'Roster will appear after backend sync'
+            : 'Active learners in current sections',
+      ),
+      FocusMetric(
+        label: 'Issues',
+        value: '${_attendanceIssues.length}',
+        helperText: _attendanceIssues.isEmpty
+            ? 'No pending attendance issues'
+            : 'Attendance cases awaiting your action',
+      ),
+      FocusMetric(
+        label: 'Materials',
+        value: '${_materials.length}',
+        helperText: _materials.isEmpty
+            ? 'No live resources uploaded yet'
+            : 'Resources available to students',
+      ),
+    ];
+  }
+
+  List<Schedule> getTodayClasses() {
+    final weekday = DateTime.now().weekday;
+    return _schedules.where((schedule) => schedule.dayOfWeek == weekday).toList()
+      ..sort((a, b) => a.period.compareTo(b.period));
+  }
+
+  String _nameFromEmail(String email, {required String fallback}) {
+    final localPart = email.split('@').first.trim();
+    if (localPart.isEmpty) {
+      return fallback;
+    }
+
+    final pieces = localPart.split(RegExp(r'[._-]+'));
+    return pieces
+        .where((piece) => piece.isNotEmpty)
+        .map((piece) => '${piece[0].toUpperCase()}${piece.substring(1)}')
+        .join(' ');
+  }
 }

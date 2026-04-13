@@ -285,7 +285,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.grade, size: 14, color: AppColors.success),
+                const Icon(Icons.grade, size: 14, color: AppColors.success),
                 const SizedBox(width: 4),
                 Text(
                     'Marks: ${submission.marks ?? 'Pending'}/${assignment.maxMarks}',
@@ -359,8 +359,8 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                           fontWeight: FontWeight.w600)),
                 ),
                 const SizedBox(height: 24),
-                Text('Description',
-                    style: const TextStyle(
+                const Text('Description',
+                    style: TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(assignment.description,

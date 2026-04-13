@@ -28,8 +28,8 @@ class _MarkAttendanceWithOTPScreenState
   void _verifyOTP() {
     if (_selectedSubject == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please select a subject'),
+        const SnackBar(
+          content: Text('Please select a subject'),
           backgroundColor: AppColors.error,
         ),
       );
@@ -38,8 +38,8 @@ class _MarkAttendanceWithOTPScreenState
 
     if (_otpController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please enter the OTP'),
+        const SnackBar(
+          content: Text('Please enter the OTP'),
           backgroundColor: AppColors.error,
         ),
       );
@@ -48,8 +48,8 @@ class _MarkAttendanceWithOTPScreenState
 
     if (_otpController.text.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('OTP must be 6 digits'),
+        const SnackBar(
+          content: Text('OTP must be 6 digits'),
           backgroundColor: AppColors.error,
         ),
       );
@@ -72,10 +72,10 @@ class _MarkAttendanceWithOTPScreenState
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('✓ Attendance marked for today'),
+          const SnackBar(
+            content: Text('✓ Attendance marked for today'),
             backgroundColor: AppColors.success,
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
           ),
         );
 
@@ -137,7 +137,7 @@ class _MarkAttendanceWithOTPScreenState
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.check_circle,
                         size: 64,
                         color: AppColors.success,
@@ -146,7 +146,7 @@ class _MarkAttendanceWithOTPScreenState
                       Text(
                         _verificationMessage,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: AppColors.success,
@@ -168,11 +168,11 @@ class _MarkAttendanceWithOTPScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         children: [
                           Icon(Icons.subject, color: AppColors.info),
-                          const SizedBox(width: 8),
-                          const Text(
+                          SizedBox(width: 8),
+                          Text(
                             'Select Subject',
                             style: TextStyle(
                               fontSize: 16,
@@ -215,11 +215,11 @@ class _MarkAttendanceWithOTPScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         children: [
                           Icon(Icons.lock_outline, color: AppColors.warning),
-                          const SizedBox(width: 8),
-                          const Text(
+                          SizedBox(width: 8),
+                          Text(
                             'Enter OTP',
                             style: TextStyle(
                               fontSize: 16,
@@ -305,15 +305,15 @@ class _MarkAttendanceWithOTPScreenState
                   borderRadius: BorderRadius.circular(10),
                 ),
                 color: AppColors.info.withValues(alpha: 0.1),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
+                child: const Padding(
+                  padding: EdgeInsets.all(16),
                   child: Row(
                     children: [
                       Icon(
                         Icons.info_outline,
                         color: AppColors.info,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           'OTP is valid for 5 minutes. Make sure to enter it before it expires.',

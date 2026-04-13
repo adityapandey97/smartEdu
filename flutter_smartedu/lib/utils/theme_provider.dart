@@ -37,7 +37,7 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: AppColors.primaryLight,
       secondary: AppColors.secondaryLight,
       surface: AppColors.surfaceLight,
@@ -104,7 +104,7 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-    colorScheme: ColorScheme.dark(
+    colorScheme: const ColorScheme.dark(
       primary: AppColors.primaryDark,
       secondary: AppColors.secondaryDark,
       surface: AppColors.surfaceDark,
@@ -164,6 +164,6 @@ class AppTheme {
     drawerTheme: const DrawerThemeData(
       backgroundColor: AppColors.surfaceDark,
     ),
-    dividerTheme: DividerThemeData(color: AppColors.surfaceDark),
+    dividerTheme: const DividerThemeData(color: AppColors.surfaceDark),
   );
 }

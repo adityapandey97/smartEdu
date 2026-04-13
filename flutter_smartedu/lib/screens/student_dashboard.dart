@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/dashboard_insight_model.dart';
 import '../utils/theme_provider.dart';
 import '../utils/app_theme.dart';
 import '../services/mock_data_service.dart';
@@ -17,6 +18,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
   double _attendancePercentage = 0;
   int _pendingAssignments = 0;
   double _averageMarks = 0;
+  List<DashboardInsight> _insights = const [];
+  List<FocusMetric> _focusMetrics = const [];
 
   @override
   void initState() {
@@ -30,6 +33,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
       _attendancePercentage = _mockData.getOverallAttendancePercentage();
       _pendingAssignments = _mockData.getPendingAssignments();
       _averageMarks = _mockData.getAverageMarks();
+      _insights = _mockData.getStudentInsights();
+      _focusMetrics = _mockData.getStudentFocusMetrics();
     });
   }
 
@@ -171,6 +176,8 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 ),
               _buildSmartSuggestions(context, primaryColor),
               const SizedBox(height: 24),
+              _buildAcademicPulse(context, primaryColor),
+              const SizedBox(height: 24),
               _buildQuickActions(context, primaryColor),
             ],
           ),
@@ -256,6 +263,164 @@ class _StudentDashboardState extends State<StudentDashboard> {
     );
   }
 
+  Widget _buildAcademicPulse(BuildContext context, Color primaryColor) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: Text(
+                'Academic Pulse',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Text(
+              'Live snapshot',
+              style: TextStyle(
+                color: primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: _focusMetrics
+                      .map((metric) => _buildMetricChip(metric, primaryColor))
+                      .toList(),
+                ),
+                const SizedBox(height: 16),
+                ..._insights.map(
+                  (insight) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildInsightTile(context, insight),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMetricChip(FocusMetric metric, Color primaryColor) {
+    return Container(
+      width: 150,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: primaryColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            metric.label,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            metric.value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: primaryColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            metric.helperText,
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInsightTile(BuildContext context, DashboardInsight insight) {
+    final color = _colorForSeverity(insight.severity);
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: color.withValues(alpha: 0.1),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color.withValues(alpha: 0.14),
+            ),
+            child: Icon(_iconForInsight(insight.iconKey), color: color),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  insight.title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(insight.message),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, insight.routeName),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    foregroundColor: color,
+                  ),
+                  child: Text(insight.actionLabel),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _colorForSeverity(String severity) {
+    switch (severity) {
+      case 'high':
+        return AppColors.error;
+      case 'medium':
+        return AppColors.warning;
+      default:
+        return AppColors.info;
+    }
+  }
+
+  IconData _iconForInsight(String iconKey) {
+    switch (iconKey) {
+      case 'assignment':
+        return Icons.assignment;
+      case 'quiz':
+        return Icons.quiz;
+      case 'notification':
+        return Icons.notifications_active;
+      case 'warning':
+        return Icons.warning_amber_rounded;
+      default:
+        return Icons.auto_graph;
+    }
+  }
+
   Widget _buildSuggestionItem(
       IconData icon, String title, String subtitle, Color color) {
     return Padding(
@@ -265,7 +430,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-                color: color.withOpacity(0.1), shape: BoxShape.circle),
+                color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(width: 12),
@@ -330,7 +495,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [color, color.withOpacity(0.7)],
+                colors: [color, color.withValues(alpha: 0.7)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight),
             borderRadius: BorderRadius.circular(12),

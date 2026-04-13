@@ -33,8 +33,8 @@ class _GenerateAttendanceOTPScreenState
   void _generateNewOTP() {
     if (_selectedSubject == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please select a subject first'),
+        const SnackBar(
+          content: Text('Please select a subject first'),
           backgroundColor: AppColors.error,
         ),
       );
@@ -48,8 +48,8 @@ class _GenerateAttendanceOTPScreenState
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('OTP generated successfully'),
+      const SnackBar(
+        content: Text('OTP generated successfully'),
         backgroundColor: AppColors.success,
       ),
     );
@@ -64,8 +64,8 @@ class _GenerateAttendanceOTPScreenState
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Attendance session ended'),
+      const SnackBar(
+        content: Text('Attendance session ended'),
         backgroundColor: AppColors.info,
       ),
     );
@@ -108,11 +108,11 @@ class _GenerateAttendanceOTPScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.subject, color: AppColors.info),
-                        const SizedBox(width: 8),
-                        const Text(
+                        SizedBox(width: 8),
+                        Text(
                           'Select Subject',
                           style: TextStyle(
                             fontSize: 16,
@@ -170,7 +170,7 @@ class _GenerateAttendanceOTPScreenState
                       const SizedBox(height: 12),
                       Text(
                         _generatedOTP,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
                           color: AppColors.success,
@@ -189,7 +189,7 @@ class _GenerateAttendanceOTPScreenState
                         ),
                         child: Text(
                           'Expires at: ${_otpExpiresAt?.hour.toString().padLeft(2, '0')}:${_otpExpiresAt?.minute.toString().padLeft(2, '0')}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.warning,
                             fontWeight: FontWeight.w600,
                           ),
@@ -219,7 +219,7 @@ class _GenerateAttendanceOTPScreenState
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.info_outline,
                         size: 48,
                         color: AppColors.info,

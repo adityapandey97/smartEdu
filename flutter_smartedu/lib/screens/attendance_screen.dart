@@ -152,14 +152,14 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Row(
+              child: const Row(
                 children: [
-                  const Icon(Icons.warning, color: Colors.amber),
-                  const SizedBox(width: 8),
+                  Icon(Icons.warning, color: Colors.amber),
+                  SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Your attendance is below 75%. Please attend upcoming classes!',
-                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      style: TextStyle(color: Colors.white, fontSize: 13),
                     ),
                   ),
                 ],

@@ -70,7 +70,7 @@ class _TakeAttendanceScreenState extends State<TakeAttendanceScreen> {
                           color: AppColors.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.lock,
                           color: AppColors.success,
                           size: 32,
@@ -93,12 +93,12 @@ class _TakeAttendanceScreenState extends State<TakeAttendanceScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Row(
+                      const Row(
                         children: [
                           Icon(Icons.check_circle,
                               size: 18, color: AppColors.success),
-                          const SizedBox(width: 8),
-                          const Text(
+                          SizedBox(width: 8),
+                          Text(
                             'Recommended',
                             style: TextStyle(
                               fontSize: 12,
@@ -132,7 +132,7 @@ class _TakeAttendanceScreenState extends State<TakeAttendanceScreen> {
                         color: AppColors.info.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.list,
                         color: AppColors.info,
                         size: 32,
@@ -163,7 +163,7 @@ class _TakeAttendanceScreenState extends State<TakeAttendanceScreen> {
                     ),
                     const SizedBox(height: 8),
                     DropdownButtonFormField<String>(
-                      value: _selectedSubject,
+                      initialValue: _selectedSubject,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.book),
                         border: OutlineInputBorder(
@@ -260,15 +260,15 @@ class _TakeAttendanceScreenState extends State<TakeAttendanceScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),
               color: AppColors.warning.withValues(alpha: 0.1),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+              child: const Padding(
+                padding: EdgeInsets.all(16),
                 child: Row(
                   children: [
                     Icon(
                       Icons.lightbulb_outline,
                       color: AppColors.warning,
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         'Use OTP method for secure and quick attendance marking',

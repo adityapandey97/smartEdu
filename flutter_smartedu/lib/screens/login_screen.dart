@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../utils/theme_provider.dart';
 import '../utils/app_theme.dart';
 import '../services/mock_data_service.dart';
@@ -61,168 +62,314 @@ class _LoginScreenState extends State<LoginScreen> {
         isDark ? AppColors.secondaryDark : AppColors.secondaryLight;
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 40),
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  gradient:
-                      LinearGradient(colors: [primaryColor, secondaryColor]),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: const Icon(Icons.school, size: 50, color: Colors.white),
-              ),
-              const SizedBox(height: 24),
-              const Text('Welcome Back!',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center),
-              const SizedBox(height: 8),
-              Text('Sign in to continue to SmartEdu',
-                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-                  textAlign: TextAlign.center),
-              const SizedBox(height: 40),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: const Icon(Icons.email),
-                        filled: true,
-                        fillColor: isDark
-                            ? AppColors.surfaceDark
-                            : Colors.grey.shade100,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty)
-                          return 'Please enter email';
-                        if (!value.contains('@'))
-                          return 'Please enter valid email';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock),
-                        suffixIcon: IconButton(
-                          icon: Icon(_obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                          onPressed: () => setState(
-                              () => _obscurePassword = !_obscurePassword),
-                        ),
-                        filled: true,
-                        fillColor: isDark
-                            ? AppColors.surfaceDark
-                            : Colors.grey.shade100,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty)
-                          return 'Please enter password';
-                        if (value.length < 6)
-                          return 'Password must be at least 6 characters';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _handleLogin,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                        ),
-                        child: _isLoading
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                    color: Colors.white, strokeWidth: 2))
-                            : const Text('Sign In',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Don't have an account? ",
-                      style: TextStyle(color: Colors.grey.shade600)),
-                  TextButton(
-                    onPressed: () => Navigator.pushNamed(context, '/register'),
-                    child: Text('Sign Up',
-                        style: TextStyle(
-                            color: primaryColor, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.info.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.info.withOpacity(0.3)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Demo Credentials:',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.info)),
-                    const SizedBox(height: 8),
-                    Text('Student: student@smartedu.com',
-                        style: TextStyle(color: Colors.grey.shade700)),
-                    Text('Teacher: teacher@smartedu.com',
-                        style: TextStyle(color: Colors.grey.shade700)),
-                    const Text('Password: demo123',
-                        style: TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Consumer<ThemeProvider>(
-                builder: (context, themeProvider, _) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(isDark ? 'Dark Mode' : 'Light Mode',
-                          style: TextStyle(color: Colors.grey.shade600)),
-                      Switch(
-                        value: themeProvider.isDarkMode,
-                        onChanged: (value) => themeProvider.setDarkMode(value),
-                        activeColor: primaryColor,
-                      ),
-                    ],
-                  );
-                },
-              ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              primaryColor.withValues(alpha: 0.12),
+              secondaryColor.withValues(alpha: 0.06),
+              Theme.of(context).scaffoldBackgroundColor,
             ],
           ),
         ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 12),
+                _buildHeroHeader(primaryColor, secondaryColor),
+                const SizedBox(height: 28),
+                Container(
+                  padding: const EdgeInsets.all(22),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.surfaceDark : Colors.white,
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(
+                      color: primaryColor.withValues(alpha: 0.12),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Sign in',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Use any real email. The app infers teacher access from addresses containing teacher or professor.',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            prefixIcon: const Icon(Icons.email_outlined),
+                            filled: true,
+                            fillColor: isDark
+                                ? AppColors.backgroundDark
+                                : Colors.grey.shade100,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter email';
+                            }
+                            if (!value.contains('@')) {
+                              return 'Please enter valid email';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: isDark
+                                ? AppColors.backgroundDark
+                                : Colors.grey.shade100,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter password';
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _handleLogin,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryColor,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    width: 24,
+                                    height: 24,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Enter Workspace',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildAccessGuide(primaryColor, isDark),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account? ",
+                      style: TextStyle(color: Colors.grey.shade600),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pushNamed(context, '/register'),
+                      child: Text(
+                        'Sign Up',
+                        style: TextStyle(
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Consumer<ThemeProvider>(
+                  builder: (context, themeProvider, _) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          isDark ? 'Dark Mode' : 'Light Mode',
+                          style: TextStyle(color: Colors.grey.shade600),
+                        ),
+                        Switch(
+                          value: themeProvider.isDarkMode,
+                          onChanged: (value) =>
+                              themeProvider.setDarkMode(value),
+                          activeThumbColor: primaryColor,
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildHeroHeader(Color primaryColor, Color secondaryColor) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [primaryColor, secondaryColor],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(32),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 68,
+            height: 68,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Icon(Icons.school, size: 34, color: Colors.white),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'SmartEdu',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'A cleaner academic workspace with live dashboards, sharper signals, and zero fake records.',
+            style: TextStyle(
+              fontSize: 15,
+              height: 1.5,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAccessGuide(Color primaryColor, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: primaryColor.withValues(alpha: 0.12)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.auto_awesome, color: primaryColor),
+              const SizedBox(width: 10),
+              const Text(
+                'Access Guide',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          _buildGuideRow(
+            'Student mode',
+            'Use a normal email like `name@college.edu`.',
+          ),
+          const SizedBox(height: 10),
+          _buildGuideRow(
+            'Teacher mode',
+            'Use an email containing `teacher` or `professor`.',
+          ),
+          const SizedBox(height: 10),
+          _buildGuideRow(
+            'No dummy data',
+            'The app opens with clean live-ready states instead of seeded records.',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGuideRow(String title, String subtitle) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: Icon(Icons.check_circle, size: 18, color: AppColors.success),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: const TextStyle(color: AppColors.textPrimary, height: 1.4),
+              children: [
+                TextSpan(
+                  text: '$title: ',
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                TextSpan(text: subtitle),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

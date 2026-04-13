@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/dashboard_insight_model.dart';
 import '../utils/theme_provider.dart';
 import '../utils/app_theme.dart';
 import '../services/mock_data_service.dart';
@@ -16,6 +17,8 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
   int _totalStudents = 0;
   int _pendingAttendanceIssues = 0;
   int _pendingAssignments = 0;
+  List<DashboardInsight> _insights = const [];
+  List<FocusMetric> _focusMetrics = const [];
 
   @override
   void initState() {
@@ -31,6 +34,8 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
           .getAssignments()
           .where((a) => a.deadline.isAfter(DateTime.now()))
           .length;
+      _insights = _mockData.getTeacherInsights();
+      _focusMetrics = _mockData.getTeacherFocusMetrics();
     });
   }
 
@@ -117,6 +122,8 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
               _buildStatCards(primaryColor),
               const SizedBox(height: 24),
               _buildQuickActions(context, primaryColor),
+              const SizedBox(height: 24),
+              _buildClassroomPulse(context, primaryColor),
               const SizedBox(height: 24),
               _buildRecentActivity(context, primaryColor),
             ],
@@ -209,6 +216,149 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
     );
   }
 
+  Widget _buildClassroomPulse(BuildContext context, Color primaryColor) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Classroom Pulse',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: _focusMetrics
+                      .map((metric) => _buildMetricChip(metric, primaryColor))
+                      .toList(),
+                ),
+                const SizedBox(height: 16),
+                ..._insights.map(
+                  (insight) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildInsightTile(context, insight),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMetricChip(FocusMetric metric, Color primaryColor) {
+    return Container(
+      width: 150,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: primaryColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            metric.label,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            metric.value,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: primaryColor,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            metric.helperText,
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInsightTile(BuildContext context, DashboardInsight insight) {
+    final color = _colorForSeverity(insight.severity);
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color.withValues(alpha: 0.14),
+            ),
+            child: Icon(_iconForInsight(insight.iconKey), color: color),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  insight.title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(insight.message),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () =>
+                      Navigator.pushNamed(context, insight.routeName),
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    foregroundColor: color,
+                  ),
+                  child: Text(insight.actionLabel),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _colorForSeverity(String severity) {
+    switch (severity) {
+      case 'high':
+        return AppColors.error;
+      case 'medium':
+        return AppColors.warning;
+      default:
+        return AppColors.info;
+    }
+  }
+
+  IconData _iconForInsight(String iconKey) {
+    switch (iconKey) {
+      case 'assignment':
+        return Icons.assignment;
+      case 'warning':
+        return Icons.warning_amber_rounded;
+      case 'schedule':
+        return Icons.schedule;
+      default:
+        return Icons.auto_graph;
+    }
+  }
+
   Widget _buildActionChip(
       String title, IconData icon, Color color, VoidCallback onTap) {
     return InkWell(
@@ -217,9 +367,9 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withOpacity(0.3))),
+            border: Border.all(color: color.withValues(alpha: 0.3))),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
